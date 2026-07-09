@@ -59,4 +59,35 @@ with col1:
     elif (mu - sigma) <= current_N <= (mu + sigma):
         st.success("✅ **최적 질소-옥신 밸런스:** 적절한 질소 신호가 옥신의 최적 흐름과 축적을 유도하여, 뿌리 계의 분지와 성장을 극대화합니다.")
     else:
-        st.warning("⚠️ **질소 과잉 (과포화) 상태:** 고농도 질소(특히 암모늄 독성 등)로 인해 옥신 수송체(PIN)의 비정상적 다운레귤레이션이 일어나
+        st.warning("⚠️ **질소 과잉 (과포화) 상태:** 고농도 질소(특히 암모늄 독성 등)로 인해 옥신 수송체(PIN)의 비정상적 다운레귤레이션이 일어나 성장이 억제될 수 있습니다.")
+
+with col2:
+    st.subheader("📈 질소 농도-옥신 활성화 곡선")
+    
+    # 그래프 플로팅 데이터 생성
+    N_range = np.linspace(0, 25, 300)
+    auxin_range = calculate_auxin_activation(N_range, mu, sigma, max_act, base_act)
+    
+    fig, ax = plt.subplots(figsize=(7, 4.5))
+    ax.plot(N_range, auxin_range, color='#2ca02c', linewidth=2.5, label='Auxin Activation Curve')
+    
+    # 현재 농도 위치 표시
+    ax.scatter([current_N], [current_auxin_level], color='red', s=100, zorder=5, label='Current State')
+    ax.axvline(x=current_N, color='red', linestyle=':', alpha=0.7)
+    ax.axhline(y=current_auxin_level, color='red', linestyle=':', alpha=0.7)
+    
+    # 최적 지점 표시
+    ax.axvline(x=mu, color='blue', linestyle='--', alpha=0.5, label=f'Optimal N ({mu} mM)')
+    
+    ax.set_title(f"{nitrogen_type} vs Auxin Activation", fontsize=12, fontweight='bold')
+    ax.set_xlabel("Nitrogen Concentration (mM)", fontsize=10)
+    ax.set_ylabel("Auxin Activation Level (%)", fontsize=10)
+    ax.set_xlim(0, 25)
+    ax.set_ylim(0, 110)
+    ax.grid(True, linestyle='--', alpha=0.5)
+    ax.legend(loc='upper right')
+    
+    st.pyplot(fig)
+
+st.markdown("---")
+st.caption("본 프로그램은 식물 영양학 연구 데이터를 기반으로 한 수학적 모델링 예시입니다. 실제 식물 종(예: 애기장대, 벼 등) 및 조직(지상부/지하부)에 따라 세부 수치는 다를 수 있습니다.")
